@@ -25,14 +25,19 @@ import Visualizer from './BezierVisualizer.vue'
       " src="https://i.imgur.com/7TXbj5h.png" />
     <!-- Start project -->
     <article id="box" flexcol>
-        <section visual></section>
+        <section visual>
+            <!-- Show visualizer -->
+        </section>
         <section interaction>
             <div presets flexcol>
+                <!-- three vertical buttons, click to assign preset coords -->
             </div>
             <div adjust>
+                <!-- primary interactive zone -->
             </div>
         </section>
         <section input>
+            <!-- display the calculated cubic-bezier value -->
         </section>
     </article>
 </template>

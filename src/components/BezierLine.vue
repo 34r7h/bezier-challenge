@@ -1,5 +1,4 @@
-<script setup lang="ts">
-import { ref, defineComponent, onMounted, nextTick, watch } from 'vue';
+<script lang="ts">
 /**
  * Line generator component
  * Purpose
@@ -7,11 +6,40 @@ import { ref, defineComponent, onMounted, nextTick, watch } from 'vue';
  *  Secondary: keeps view updated on value changes from parent component
  * Components: none
  */
+import { ref, defineComponent, onMounted, nextTick, watch } from 'vue';
+export default defineComponent({
+    name: 'BezierLine',
+    props: {
+        coords: {
+            type: Array,
+            default: [0, 0, 0, 0],
+        },
+        interact: {
+            type: Boolean,
+            default: false,
+        },
+        name: {
+            type: String,
+            default: 'bezline-default',
+        },
+    },
+    setup(props, refs) {
+        function drawline() { }
+        onMounted(() => { })
+        watch(() => props, () => drawline(), {
+            immediate: true, deep: true
+        })
+        return {}
+    }
+})
 </script>
 
 <template>
-    <div></div>
+    <div class="container" :id="`canvas-${name}`">
+        {{ coords }}
+    </div>
 </template>
 
 <style scoped>
+
 </style>
