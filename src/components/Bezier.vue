@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import BezLine from './BezierLine.vue'
+import BezierLine from './BezierLine.vue'
 import Visualizer from './BezierVisualizer.vue'
 /**
  * Main component container (Interactive)
@@ -9,10 +9,16 @@ import Visualizer from './BezierVisualizer.vue'
  *  Secondary: display preset values, an animation infographic, and show the current values
  * Components: BezierLine, Visualizer
  */
+var coords = ref([0,0,0,0])
+const presetCoords = ref([
+[.5,1,-0.5,0], // "S" - bottom of the curve is pulled right, top is pulled left
+[1,1,1,1], // middle of the curve is towards bottom-right corner
+[0,0,0,0] // middle of the curve is towards top-left corner
+])
 
 </script>
 
-<template>
+<template class="test">
     <!-- Reference image -->
     <img style="
         object-fit: cover;
@@ -26,23 +32,28 @@ import Visualizer from './BezierVisualizer.vue'
     <!-- Start project -->
     <article id="box" flexcol>
         <section visual>
-            <!-- Show visualizer -->
+          <Visualizer :coords="coords"/><!-- Show visualizer -->
         </section>
         <section interaction>
             <div presets flexcol>
                 <!-- three vertical buttons, click to assign preset coords -->
+                <button v-for="presetCoord in presetCoords" @click="coords = presetCoord">
+                <BezierLine :coords="presetCoord"/></button>
             </div>
             <div adjust>
-                <!-- primary interactive zone -->
+                <BezierLine :coords="coords"/><!-- primary interactive zone -->
             </div>
         </section>
         <section input>
-            <!-- display the calculated cubic-bezier value -->
+            <!-- display the calculated cubic-bezier values -->
+            {{coords}}
         </section>
     </article>
 </template>
 
 <style scoped>
+.test > * {background:rgba(0,0,0,.9); border: rgba(0,0,0,.4) solid}
+
 #box {
   display: flex;
   flex-direction: column;
