@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Bezier from './components/Bezier.vue';
+import Bez from './components/Bez.vue';
 </script>
 
 <template>
   <article id="bezier-example">
-    <bezier />
+    <bez />
   </article>
 </template>
 

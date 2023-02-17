@@ -140,7 +140,7 @@ export default defineComponent({
         watch(() => props, () => drawline(), {
             immediate: true, deep: true
         })
-        return { c1, c2, path, testcoords, box, drag1, drop, circle1, circle2, dragOffsetX, dragOffsetY }
+        return { c1, c2, path, {coords: props.coords}, testcoords, box, drag1, drop, circle1, circle2, dragOffsetX, dragOffsetY }
     }
 })
 </script>
@@ -160,7 +160,7 @@ export default defineComponent({
         <svg style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <g>
                 <circle v-for="i in 2" :id="`circle${i}`" :ref="`circle${i}`" draggable @mousedown="drag1" @mouseup="drop"
-                    :cx="(i == 1 ? c1[0] : c2[0]) * 100"
+                    :cx="(i == 1 ? coords[0] : c2[0]) * 100"
                     :cy="(i == 1 ? c1[1] : c2[1]) * 100" r="5" :fill="i == 1 ? 'red' : 'blue'" />
             </g>
             <g id="Sine">
