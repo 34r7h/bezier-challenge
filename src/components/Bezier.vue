@@ -13,9 +13,13 @@ var coords = ref([0,0,0,0])
 const presetCoords = ref([
 [.5,1,-0.5,0], // "S" - bottom of the curve is pulled right, top is pulled left
 [1,1,1,1], // middle of the curve is towards bottom-right corner
-[0,0,0,0] // middle of the curve is towards top-left corner
+[0,0,0,0], // middle of the curve is towards top-left corner
+[.2,.3,.1,.5] // just for kicks
 ])
-
+function updateCoords(newCoords: [number, number, number, number]){
+  console.log('Bezier', {newCoords});
+  return coords.value = newCoords
+}
 </script>
 
 <template class="test">
@@ -41,7 +45,7 @@ const presetCoords = ref([
                 <BezierLine :coords="presetCoord"/></button>
             </div>
             <div adjust>
-                <BezierLine :coords="coords"/><!-- primary interactive zone -->
+                <BezierLine interact @newCoords="updateCoords" :coords="coords"/><!-- primary interactive zone -->
             </div>
         </section>
         <section input>
