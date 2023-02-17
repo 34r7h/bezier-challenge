@@ -28,8 +28,8 @@ export default defineComponent({
         const box = ref<HTMLElement | null>(null)
         const circle1 = ref<SVGGraphicsElement[]>([])
         const circle2 = ref<SVGGraphicsElement[]>([])
-        const dragOffset = ref({ x: 0, y: 0 })
-        const dragEnabled = ref<Array<boolean>>([false, false])
+        const dragOffsetX = ref(0)
+        const dragOffsetY = ref(0)
         const testcoords = ref([
             //Straight line
             "M1,99 C1,99 1,99 50,50 C50,50 99,1 99,1",
@@ -57,27 +57,21 @@ export default defineComponent({
              * All curves start and stop at 1,99 and 99,1 respectively. 
              */
         ])
-        var truecoords: any = computed({
-            get: () => {
-                console.log(props.coords)
-                return props.coords
-            },
-            set: (val) => {
-                console.log('setting', { val })
-                ctx.emit('newCoords', [...val, ...c.value.c2])
-            }
-        })
-        const coordinates = { // c1,c2 == circles, bh,bw == box w/h
-            c1: computed(() => [truecoords.value[0], truecoords.value[1]]),
-            c2: computed(() => [truecoords.value[2], truecoords.value[3]]),
-            c: computed(() => [...truecoords.value]),
-            b: computed(() => ({
-                w: box?.value?.getBoundingClientRect().width,
-                h: box?.value?.getBoundingClientRect().height,
-            }))
-        }
-        const c = ref(coordinates)
-        console.log({ c });
+        const c1 = computed(() => [props.coords[0], props.coords[1]] as [number, number])
+        const c2 = computed(() => [props.coords[2], props.coords[3]] as [number, number])
+        const boxSize = computed(() => box?.value?.getBoundingClientRect())
+        
+        // const coordinates = { // c1,c2 == circles, bh,bw == box w/h
+        //     c1: computed(() => [props.coords[0], props.coords[1]]),
+        //     c2: computed(() => [props.coords[2], props.coords[3]]),
+        //     c: computed(() => props.coords),
+        //     b: computed(() => ({
+        //         w: box?.value?.getBoundingClientRect().width,
+        //         h: box?.value?.getBoundingClientRect().height,
+        //     }))
+        // }
+        // const c = ref(coordinates)
+        // console.log({ c });
 
 
         const path = computed(() => "M1,99 C1,99 1,99 50,50 C50,50 99,1 99,1")
@@ -89,10 +83,13 @@ export default defineComponent({
             const id = (e.target as SVGGraphicsElement)?.id;
             const circleElement: SVGGraphicsElement[] | null =
                 id === 'circle1' ? circle1.value : id === 'circle2' ? circle2.value : null;
+            console.log({circleElement})
             if (circleElement) {
-                const rect = circleElement[0].getBBox();
-                dragOffset.value.x = e.clientX - (rect.left + c.value.b.w! / 2);
-                dragOffset.value.y = e.clientY - (rect.top + c.value.b.h! / 2);
+                const cir = circleElement[0].getBBox();
+                console.log({cir,  offset: [e.offsetX, e.offsetY] }, { c: [boxSize.value, c1.value, c2.value] }, { cir })
+                dragOffsetX.value = (e.offsetX - (cir.width / 2)) / boxSize.value?.width!;
+                dragOffsetY.value = (e.offsetY - (cir.height / 2)) / boxSize.value?.height!;
+                console.log({ dragOffsetX, dragOffsetY }, [e.offsetX - (cir.width / 2),  e.offsetY - (cir.height / 2)])
             }
             box?.value?.addEventListener('mousemove', move);
         }
@@ -106,105 +103,65 @@ export default defineComponent({
             console.log({ svgElement, circleElement });
 
             if (svgElement && circleElement?.[0]) {
-                const bbox = circleElement[0].getBBox();
-                console.log({ bbox });
+                // const bbox = circleElement[0].getBBox();
+                // console.log({ bbox });
+                console.log({ cb: box.value, offsets: {dragOffsetX, dragOffsetY} });
+                const ratios = {
+                    x: (dragOffsetX.value / (boxSize?.value?.width!)) * 100,
+                    y: (dragOffsetY.value /  (boxSize?.value?.height!)) * 100,
+                }
+                console.log({ ratios });
+                console.log('Circle1:', { x: [c1.value[0], ratios.x] }, { y: [c1.value[1], ratios.y] });
+                let newCoords = (id === 'circle1' ?
+                    [Math.ceil(c1.value[0] + ratios.x), Math.ceil(c1.value[1] + ratios.y), ...c2.value] :
+                    [...c1.value, Math.ceil(c2.value[0] + ratios.x), Math.ceil(c2.value[1] + ratios.y)])
+                    .map(x => +(x / 100)
+                    .toFixed(2))
 
-                const x = (bbox.x + bbox.width) / 200;
-                const y = (bbox.y + bbox.height) / 200;
-                console.log({ bbox, x, y });
-                let newCoords = id === 'circle1' ? [x, y, ...c.value.c2] : [...c.value.c1, x, y]
                 console.log('move', { newCoords });
-
-                return ctx.emit('newCoords', newCoords.map(x => +(x.toFixed(2))))
-
-                // circleElement.setAttribute('cx', String(x - dragOffset.value.x));
-                // circleElement.setAttribute('cy', String(y - dragOffset.value.y));
+                circleElement[0].setAttribute('cx', newCoords[id === 'circle1' ? 0 : 2].toString());
+                circleElement[0].setAttribute('cy', newCoords[id === 'circle1' ? 1 : 3].toString());
+                ctx.emit('newCoords', newCoords)
             }
         }
-
 
         function drop(e: MouseEvent) {
             console.log('drop', { e });
             const id = (e.target as SVGGraphicsElement)?.id;
             const circleElement: SVGGraphicsElement[] | null = id === 'circle1' ? circle1.value : id === 'circle2' ? circle2.value : null;
-            dragOffset.value.x = dragOffset.value.y = 0;
+            dragOffsetX.value = dragOffsetY.value = 0;
             box?.value?.removeEventListener('mousemove', move)
+            ctx.emit('newCoords', [...c1.value, ...c2.value])
         }
-
-
-
-
 
         function drawline() { }
-        function drag(e: any) {
-            if (!dragEnabled.value[0] && !dragEnabled.value[1]) {
-                return
-            }
-            console.log({ e }, dragEnabled.value[0])
-            const deltaX = e.movementX / 100
-            const deltaY = e.movementY / 100
-            var [dc1, dc2] = [
-                [c.value.c[0], c.value.c[1]],
-                [c.value.c[2], c.value.c[3]]
-            ]
-            if (e.target.id == 'circle1') {
-                dc1 = [
-                    dc1[0] + deltaX,
-                    dc1[1] + deltaY
-                ]
-            }
-            if (e.target.id == 'circle2') {
-                dc2 = [
-                    dc2[0] + deltaX,
-                    dc2[1] + deltaY
-                ]
-            }
-            console.log({ dc1, dc2 })
-            var newCoords = [...dc1, ...dc2]
-            console.log({ newCoords });
-            return ctx.emit('newCoords', newCoords.map(x => +(x.toFixed(2))))
-
-        }
-        function enableDrag(c: number) {
-            return dragEnabled.value[c] = !dragEnabled.value[c]
-        }
-        function handleDragStart(e: any) {
-            e.preventDefault();
-        }
 
         // State set and watch
-        onMounted(() => {
-            console.log({ box: box.value }, box?.value?.getBoundingClientRect());
-            nextTick(() => {
-                console.log(circle1?.value);
-                console.log(circle2?.value);
-            })
-
-        })
         watch(() => props, () => drawline(), {
             immediate: true, deep: true
         })
-        return { c, path, testcoords, drag, dragEnabled, enableDrag, truecoords, handleDragStart, box, drag1, drop, circle1, circle2, dragOffset }
+        return { c1, c2, path, testcoords, box, drag1, drop, circle1, circle2, dragOffsetX, dragOffsetY }
     }
 })
 </script>
 
 <template>
     <div class="container" :id="`canvas-${name}`">
-        <div v-if="interact" style="position: absolute; z-index:-1;">
+        <div v-if="interact" style="position: absolute; z-index:-1; bottom:0">
             coords: {{ coords }}
-            draggable:{{ dragEnabled }}
+            <hr>
+            c1, c2: {{ c1 }}, {{ c2 }}
+            <hr>
             path: {{ path }}
-            truecoords: {{ truecoords }}
-            c: {{ c }}
-            dragOffset: {{ dragOffset }}
+            <hr>
+            dragOffset: {{ dragOffsetX }}, {{ dragOffsetY }}
         </div>
 
-        <svg ref="box" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <svg style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <g>
                 <circle v-for="i in 2" :id="`circle${i}`" :ref="`circle${i}`" draggable @mousedown="drag1" @mouseup="drop"
-                    :cx="+(c[i % 2 == 0 ? 'c2' : 'c1'][0] as Number) * 100"
-                    :cy="+(c[i % 2 == 0 ? 'c2' : 'c1'][1] as Number) * 100" r="5" fill="red" />
+                    :cx="(i == 1 ? c1[0] : c2[0]) * 100"
+                    :cy="(i == 1 ? c1[1] : c2[1]) * 100" r="5" :fill="i == 1 ? 'red' : 'blue'" />
             </g>
             <g id="Sine">
                 <path :d="path" fill="none" stroke="#000000" stroke-width="1" stroke-linecap="round" />
