@@ -91,10 +91,10 @@ export default defineComponent({
                 id === 'circle1' ? circle1.value : id === 'circle2' ? circle2.value : null;
             if (circleElement) {
                 const rect = circleElement[0].getBBox();
-                dragOffset.value.x = e.clientX - (rect.left + rect.width / 2);
-                dragOffset.value.y = e.clientY - (rect.top + rect.height / 2);
+                dragOffset.value.x = e.clientX - (rect.left + c.value.b.w! / 2);
+                dragOffset.value.y = e.clientY - (rect.top + c.value.b.h! / 2);
             }
-            circleElement?.[0].addEventListener('mousemove', move);
+            box?.value?.addEventListener('mousemove', move);
         }
 
         function move(e: MouseEvent) {
@@ -103,14 +103,20 @@ export default defineComponent({
             const id = (e.target as SVGGraphicsElement)?.id;
 
             const circleElement: SVGGraphicsElement[] | null = id === 'circle1' ? circle1.value : id === 'circle2' ? circle2.value : null;
-            console.log({svgElement, circleElement});
-            
+            console.log({ svgElement, circleElement });
+
             if (svgElement && circleElement?.[0]) {
                 const bbox = circleElement[0].getBBox();
-                const x = bbox.x + bbox.width / 2;
-                const y = bbox.y + bbox.height / 2;
-                console.log({x,y});
-                
+                console.log({ bbox });
+
+                const x = (bbox.x + bbox.width) / 200;
+                const y = (bbox.y + bbox.height) / 200;
+                console.log({ bbox, x, y });
+                let newCoords = id === 'circle1' ? [x, y, ...c.value.c2] : [...c.value.c1, x, y]
+                console.log('move', { newCoords });
+
+                return ctx.emit('newCoords', newCoords.map(x => +(x.toFixed(2))))
+
                 // circleElement.setAttribute('cx', String(x - dragOffset.value.x));
                 // circleElement.setAttribute('cy', String(y - dragOffset.value.y));
             }
@@ -178,7 +184,7 @@ export default defineComponent({
         watch(() => props, () => drawline(), {
             immediate: true, deep: true
         })
-        return { c, path, testcoords, drag, dragEnabled, enableDrag, truecoords, handleDragStart, box, drag1, drop, circle1, circle2 }
+        return { c, path, testcoords, drag, dragEnabled, enableDrag, truecoords, handleDragStart, box, drag1, drop, circle1, circle2, dragOffset }
     }
 })
 </script>
@@ -191,7 +197,7 @@ export default defineComponent({
             path: {{ path }}
             truecoords: {{ truecoords }}
             c: {{ c }}
-            {{ dragEnabled[0] }}
+            dragOffset: {{ dragOffset }}
         </div>
 
         <svg ref="box" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
