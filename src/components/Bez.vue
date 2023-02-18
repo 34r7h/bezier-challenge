@@ -42,7 +42,7 @@ function updateCoords(newCoords: [number, number, number, number]){
             <div presets flexcol>
                 <!-- three vertical buttons, click to assign preset coords -->
                 <button v-for="presetCoord in presetCoords" @click="coords = presetCoord">
-                <BezLine :coords="presetCoord"/></button>
+                <BezLine @click.prevent="()=>null" :coords="presetCoord"/></button>
             </div>
             <div adjust>
                 <BezLine interact @newCoords="updateCoords" :coords="coords"/><!-- primary interactive zone -->
