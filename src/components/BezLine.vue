@@ -41,9 +41,9 @@ export default defineComponent({
                 (e.clientX - boxElement?.left!) / boxElement?.width! * 100,
                 (e.clientY - boxElement?.top!) / boxElement?.height! * 100,
             ]
-            let circleElements = {
-                circle1: circleElement_1.value[0],
-                circle2: circleElement_2.value[0]
+            let circleElements: { [key: string]: SVGCircleElement } = {
+                'circle1': circleElement_1.value[0],
+                'circle2': circleElement_2.value[0]
             }
             let points: any = []
             let distances: any = {}
@@ -73,18 +73,21 @@ export default defineComponent({
 
             circleElements[`circle${closerCircle}`]
                 .addEventListener('mousemove', move)
+            circleElements[`circle${closerCircle}`]
+                .addEventListener('mouseout', move)
             box.value?.addEventListener('mouseup', (e) => {
-                circleElements.circle1
-                    .removeEventListener('mousemove', move)
-                circleElements.circle2
-                    .removeEventListener('mousemove', move)
+                ['circle1', 'circle2'].forEach(circle => {
+                    ['mousemove', 'mouseout'].forEach(watcher =>
+                        circleElements[circle].removeEventListener(watcher, move))
+                })
+                
             })
         }
         function move(e: any) {
             let boxElement = box.value?.getBoundingClientRect()
             let newX = (e.clientX - boxElement?.left!) / boxElement?.width!
             let newY = (e.clientY - boxElement?.top!) / boxElement?.height!
-            
+
             ctx.emit('newCoords', e.target.id == 'circle1' ?
                 [newX, newY, ...c2.value] :
                 [...c1.value, newX, newY])
@@ -107,10 +110,13 @@ export default defineComponent({
     <div class="container" :id="`svg-${name}`">
         <svg @mousedown="drag" style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
-            <g>
-                <circle v-for="i in 2" :id="`circle${i}`" :ref="`circleElement_${i}`" draggable="true" @drag="drag"
+            <g v-for="i in 2">
+                <line :x1="i == 1 ? 0 : 100" :y1="i == 1 ? 100 : 0"
+                    :x2="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
+                    :y2="+(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" stroke="black" stroke-width="1" />
+                <circle :id="`circle${i}`" :ref="`circleElement_${i}`" draggable="true" @drag="drag"
                     :cx="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
-                    :cy="+(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="i == 1 ? 'red' : 'blue'" r="5" />
+                    :cy="+(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="i == 1 ? 'red' : 'blue'" r="4" />
             </g>
         </svg>
         <div>c1: {{ c1 }}, c2: {{ c2 }}</div>
