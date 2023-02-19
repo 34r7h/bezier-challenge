@@ -11,9 +11,9 @@ import Visualizer from './BezierVisualizer.vue'
  */
 var coords = ref([0,0,0,0])
 const presetCoords = ref([
-[.33,0,.66,1], // "S" - bottom of the curve is pulled right, top is pulled left
-[.33,1,1,0], // middle of the curve is towards bottom-right corner
-[0,1,.66,0], // middle of the curve is towards top-left corner
+[.4,0,.6,1], // "S" - bottom of the curve is pulled right, top is pulled left
+[.4,0,1,1], // middle of the curve is towards bottom-right corner
+[0,0,.6,1], // middle of the curve is towards top-left corner
 ])
 function updateCoords(newCoords: [number, number, number, number]){
   console.log('Bezier', {newCoords});
@@ -22,17 +22,6 @@ function updateCoords(newCoords: [number, number, number, number]){
 </script>
 
 <template class="test">
-    <!-- Reference image -->
-    <img style="
-        object-fit: cover;
-        position: fixed;
-        z-index: -1;
-        height: 100vh;
-        width: 100vw;
-        top: 0;
-        left: 0;
-      " src="https://i.imgur.com/7TXbj5h.png" />
-    <!-- Start project -->
     <article id="box" flexcol>
         <section visual>
           <Visualizer :coords="coords"/><!-- Show visualizer -->
@@ -49,7 +38,8 @@ function updateCoords(newCoords: [number, number, number, number]){
         </section>
         <section input>
             <!-- display the calculated cubic-bezier values -->
-            <div  style="font-size: 2vh; position: fixed;">{{coords}}</div>
+            <span style="font-size: 2vh; position: fixed;">cubic-bezier(<span v-for="coord in coords">{{ coord < 1 ? coord.toFixed(2) : 1 }}, </span>)</span>
+            <!-- todo remove trailing comma -->
         </section>
     </article>
 </template>
