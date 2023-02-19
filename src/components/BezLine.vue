@@ -31,6 +31,11 @@ export default defineComponent({
         const circleElement_2 = ref<SVGCircleElement[]>([])
         const c1 = computed(() => [props.coords[0], props.coords[1]])
         const c2 = computed(() => [props.coords[2], props.coords[3]])
+        const path = computed(() => "M1,99 C1,99 1,99 70,45 C70,45 99,30   99,1")
+
+        // what is the function to translate bez coords into path points?
+
+        // given [.39, .12, .41, .78] produce an neuvoux "S" curve
 
         // define functions [drag, undrag, update]
         function drag(e: any) {
@@ -55,11 +60,11 @@ export default defineComponent({
                     circleBox.y + (circleBox.height / 2)
                 ]
                 points.push(circleCenterPoint)
-                const distanceFromClick = [
+                const differenceFromClick = [
                     Math.abs(pointClicked[0] - circleCenterPoint[0]),
                     Math.abs(pointClicked[1] - circleCenterPoint[1]),
                 ]
-                const combinedDistance = distanceFromClick.reduce((total, distance) => total + distance, 0)
+                const combinedDistance = differenceFromClick.reduce((total, distance) => total + distance, 0)
                 distances[circle[0]] = combinedDistance
             })
             const closerCircle = distances.circle1 < distances.circle2 ? '1' : '2'
@@ -71,16 +76,11 @@ export default defineComponent({
 
             console.log('drag', e, circleElement_1?.value?.[0], box.value);
 
-            circleElements[`circle${closerCircle}`]
-                .addEventListener('mousemove', move)
-            circleElements[`circle${closerCircle}`]
-                .addEventListener('mouseout', move)
+            box.value?.addEventListener('mousemove', drag)
             box.value?.addEventListener('mouseup', (e) => {
-                ['circle1', 'circle2'].forEach(circle => {
-                    ['mousemove', 'mouseout'].forEach(watcher =>
-                        circleElements[circle].removeEventListener(watcher, move))
-                })
-                
+                ['mousemove', 'mouseup'].forEach(watcher =>
+                    box.value?.removeEventListener(watcher, drag))
+
             })
         }
         function move(e: any) {
@@ -100,7 +100,7 @@ export default defineComponent({
         })
         // init and watch
         return {
-            box, c1, c2, drag, circleElement_1, circleElement_2
+            box, c1, c2, drag, circleElement_1, circleElement_2, path
         }
     }
 })
@@ -108,8 +108,11 @@ export default defineComponent({
 
 <template>
     <div class="container" :id="`svg-${name}`">
-        <svg @mousedown="drag" style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1"
+        <svg @mousedown="drag" style="z-index: 1;" ref="box" viewBox="0 0 101 101" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
+            <g id="Sine">
+                <path :d="path" fill="none" stroke="#000000" stroke-width="1" stroke-linecap="round" />
+            </g>
             <g v-for="i in 2">
                 <line :x1="i == 1 ? 0 : 100" :y1="i == 1 ? 100 : 0"
                     :x2="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
@@ -119,7 +122,7 @@ export default defineComponent({
                     :cy="+(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="i == 1 ? 'red' : 'blue'" r="4" />
             </g>
         </svg>
-        <div>c1: {{ c1 }}, c2: {{ c2 }}</div>
+        <div style="font-size: 2vh; position: fixed;">c1: {{ c1 }}, c2: {{ c2 }}</div>
 </div>
 </template>
 
