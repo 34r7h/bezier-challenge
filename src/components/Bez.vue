@@ -11,9 +11,9 @@ import Visualizer from './BezierVisualizer.vue'
  */
 var coords = ref([0,0,0,0])
 const presetCoords = ref([
-[1,0,0,1], // "S" - bottom of the curve is pulled right, top is pulled left
-[.25,1,1,0], // middle of the curve is towards bottom-right corner
-[0,0,0,0], // middle of the curve is towards top-left corner
+[.33,0,.66,1], // "S" - bottom of the curve is pulled right, top is pulled left
+[.33,1,1,0], // middle of the curve is towards bottom-right corner
+[0,1,.66,0], // middle of the curve is towards top-left corner
 ])
 function updateCoords(newCoords: [number, number, number, number]){
   console.log('Bezier', {newCoords});
