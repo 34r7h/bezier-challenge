@@ -45,7 +45,7 @@ function updateCoords(newCoords: [number, number, number, number]){
 </template>
 
 <style scoped>
-.test > * {background:rgba(0,0,0,.9); border: rgba(0,0,0,.4) solid}
+.test > * {background:rgba(0,0,0,.4); border: rgba(0,0,0,.9) solid}
 
 #box {
   display: flex;
