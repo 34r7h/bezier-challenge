@@ -26,7 +26,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>viz{{coords}}</div>
+    <div  style="position: fixed;">viz{{coords}}</div>
 </template>
 
 <style scoped>

@@ -50,7 +50,7 @@ function updateCoords(newCoords: [number, number, number, number]){
         </section>
         <section input>
             <!-- display the calculated cubic-bezier values -->
-            {{coords}}
+            <div  style="font-size: 2vh; position: fixed;">{{coords}}</div>
         </section>
     </article>
 </template>

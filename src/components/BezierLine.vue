@@ -74,7 +74,7 @@ export default defineComponent({
         // console.log({ c });
 
 
-        const path = computed(() => "M1,99 C1,99 1,99 50,50 C50,50 99,1 99,1")
+        const path = computed(() => "M1,99 C1,99 10,99 50,50 C50,60 99,1 99,1")
 
         // Required functions
 
