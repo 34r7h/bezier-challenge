@@ -6,7 +6,7 @@
  *  Secondary: keeps view updated on value changes from parent component
  * Components: none
  */
-import { ref, defineComponent, onMounted, computed, watch, nextTick } from 'vue';
+import { ref, defineComponent, computed } from 'vue';
 export default defineComponent({
     name: 'BezierLine',
     emits: ['newCoords'],

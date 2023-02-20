@@ -3,14 +3,12 @@ import Bez from './components/Bez.vue';
 </script>
 
 <template>
-  <article id="bezier-example">
-    <bez />
-  </article>
+    <div id="bezier-app"><bez /></div>
 </template>
 
 <style scoped>
-#bezier-example {
-  height: 100vh;
-  width: 100vw;
+#bezier-app {
+  height: 100%;
+  width: 100%;
 }
 </style>
