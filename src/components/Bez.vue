@@ -102,6 +102,7 @@ onMounted(() => {
     align-items: center;
     justify-content: space-around;
     max-height:20%;
+    font-size: 2vh;
 }
 
 .adjust {
