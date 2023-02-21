@@ -1,25 +1,47 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, defineProps } from 'vue'
 import BezLine from './BezLine.vue'
 import Visualizer from './BezierVisualizer.vue'
-/**
- * Main component container (Interactive)
- * Purpose
- *  Primary: let a user drag two points around a diagonal line to fine-tune cubic-bezier values
- *  Secondary: display preset values, an animation infographic, and show the current values
- * Components: BezierLine, Visualizer
- */
+
+
+const props = defineProps({
+  modelValue: String
+})
+
 var coords = ref([0, 0, 0, 0])
+const cubicBezierString = ref('')
 const presetCoords = ref([
     [.4, 0, .6, 1],
     [.4, 0, 1, 1],
     [0, 0, .6, 1],
 ])
 
+
+
 function updateCoords(newCoords: [number, number, number, number]) {
-    console.log('Bezier', { newCoords });
+    cubicBezierString.value = `cubic-bezier(${newCoords.join(', ')})`
     return coords.value = newCoords
 }
+console.log(props.modelValue);
+
+// function updateValue(newValue: string) {
+//   value.value = newValue
+// }
+
+const parsedBezierString = computed(() => {
+    if (!props.modelValue) return [0, 0, 0, 0]
+    const [...values] = props.modelValue.split('(').pop()!.split(')')[0].split(',')!
+    console.log(values)
+    return values.map(Number)
+})
+
+onMounted(() => {
+    // console.log({ parsedBezierString, value });
+    coords.value = parsedBezierString.value
+})
+
+
+
 </script>
 
 <template class="test">
@@ -49,7 +71,6 @@ function updateCoords(newCoords: [number, number, number, number]) {
 </template>
 
 <style scoped>
-
 #box {
     display: flex;
     flex-direction: column;
@@ -70,6 +91,7 @@ function updateCoords(newCoords: [number, number, number, number]) {
     display: flex;
     width: 100%;
 }
+
 .input {
     display: flex;
     width: 100%;

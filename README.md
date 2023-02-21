@@ -14,4 +14,4 @@ TODO:
 5. Find animation shadow formula
 6. Style
 7. Clean code
-8. GH Pages
+8. Deploy

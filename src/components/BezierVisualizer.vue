@@ -27,7 +27,7 @@ export default defineComponent({
 
             for (let i = 0; i < length!; i += (length! / 10)) {
                 const point = curve?.getPointAtLength(i);
-                console.log(`i: ${i}, x: ${point?.x}, y:  ${100 - point?.y!}, difference from previous x: ${i > 10 ? Number(point?.x!) - Number( curve?.getPointAtLength(i-10).x) : point?.x!}, difference from previous y: ${i > 10 ? Number(point?.y!) - Number( curve?.getPointAtLength(i-10).y) : point?.y!}`);
+                // console.log(`i: ${i}, x: ${point?.x}, y:  ${100 - point?.y!}, difference from previous x: ${i > 10 ? Number(point?.x!) - Number( curve?.getPointAtLength(i-10).x) : point?.x!}, difference from previous y: ${i > 10 ? Number(point?.y!) - Number( curve?.getPointAtLength(i-10).y) : point?.y!}`);
             }
         })
 
