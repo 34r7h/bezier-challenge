@@ -18,3 +18,4 @@ References:
 https://dev.to/abolz/roll-your-own-svg-drag-and-drop-in-vuejs-2c7o
 
 https://stackoverflow.com/questions/65844419/vue-composition-api-defining-emits
+

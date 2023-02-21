@@ -3,10 +3,15 @@ import { ref, computed, onMounted } from 'vue'
 import BezLine from './BezLine.vue'
 import Visualizer from './BezierVisualizer.vue'
 
-
+// 2-way binding setup
 const props = defineProps({
     modelValue: String
 })
+const emit = defineEmits({
+    'update:modelValue': (value: string) => true
+})
+
+// defs
 var coords = ref([0, 0, 0, 0])
 const cubicBezierString = ref('')
 const presetCoords = ref([
@@ -14,30 +19,22 @@ const presetCoords = ref([
     [.4, 0, 1, 1],
     [0, 0, .6, 1],
 ])
-const emit = defineEmits({
-    'update:modelValue': (value: string) => true
-})
 
-
+// functions
 function updateCoords(newCoords: [number, number, number, number]) {
     cubicBezierString.value = `cubic-bezier(${newCoords.map(c=>c.toFixed(2)).join(', ')})`
     emit("update:modelValue", cubicBezierString.value)
     return coords.value = newCoords
 }
-console.log(props.modelValue);
-
-const parsedBezierString = computed(() => {
+const parsedBezierString = computed(() => { // expecting a string, must parse
     if (!props.modelValue) return [0, 0, 0, 0]
     const [...values] = props.modelValue.split('(').pop()!.split(')')[0].split(',')!
     return values.map(Number)
 })
 
 onMounted(() => {
-    // console.log({ parsedBezierString, value });
     coords.value = parsedBezierString.value
 })
-
-
 
 </script>
 

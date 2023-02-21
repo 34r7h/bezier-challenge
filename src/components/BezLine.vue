@@ -1,10 +1,9 @@
 <script lang="ts">
 /**
- * Line generator component
- * Purpose
- *  Primary: draws a line with curves representing cubic bezier values passed in
- *  Secondary: keeps view updated on value changes from parent component
- * Components: none
+ *  Line generator with curve controls
+ *  Purpose:
+ *      Primary: draws a line with curves representing cubic bezier values passed in
+ *      Secondary: keeps view updated on value changes from parent component
  */
 import { ref, defineComponent, computed } from 'vue';
 export default defineComponent({
@@ -15,7 +14,7 @@ export default defineComponent({
             type: Array,
             default: [0, 0, 0, 0]
         },
-        interact: {
+        interact: { // same component for the presets
             type: Boolean,
             default: false,
         },
@@ -32,19 +31,19 @@ export default defineComponent({
         const c1 = computed(() => [props.coords[0], props.coords[1]])
         const c2 = computed(() => [props.coords[2], props.coords[3]])
         var selectedCircle = ref('')
-        const path = computed(() => {
+        const path = computed(() => { // construct path from coordinate points
             let [x1, y1, x2, y2] = [...c1.value, ...c2.value]
                 .map((coordnum) => +(coordnum!) * 100)
             var p = `M0,100 C${x1},${100 - y1} ${x2},${100 - y2} 100,0`
             return p
         })
 
-        // define functions [drag, undrag, update]
-        function drag(e: any) {
-            if (!props.interact) return
-            // find closest circle, snap circle to coords, assign move watcher,
+        function drag(e: any) {// recursive function to start and during circle movement
+            if (!props.interact) return // nothing to do on presets
+
+            // defs
             let boxElement = box.value?.getBoundingClientRect()
-            let pointClicked = [ // get relative points within svg box, scale by 100
+            let pointClicked = [ // scale by 100
                 (e.clientX - boxElement?.left!) / boxElement?.width! * 100,
                 100 - (e.clientY - boxElement?.top!) / boxElement?.height! * 100,
             ]
@@ -72,14 +71,13 @@ export default defineComponent({
             if (selectedCircle.value == '') {
                 selectedCircle.value = distances.circle1 <= distances.circle2 ? '1' : '2'
             }
-            // console.log({ points, distances, pointClicked, selectedCircle });
 
+            // Emits new coords to parent
             ctx.emit('newCoords', selectedCircle.value == '1' ?
                 [...pointClicked.map(x => x / 100), ...c2.value] :
                 [...c1.value, ...pointClicked.map(x => x / 100)])
 
-            // console.log('drag', e, circleElement_1?.value?.[0], box.value);
-
+            // Set and remove listeners 
             box.value?.addEventListener('pointermove', drag)
             box.value?.addEventListener('pointerup', (e) => {
                 ['pointermove', 'pointerup'].forEach(watcher =>
@@ -90,7 +88,7 @@ export default defineComponent({
 
         // init and watch
         return {
-            box, c1, c2, drag, circleElement_1, circleElement_2, path
+            box, c1, c2, circleElement_1, circleElement_2, drag, path
         }
     }
 })
@@ -103,15 +101,18 @@ export default defineComponent({
 
             <g id="Sine">
                 <path :d="path" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" />
-                <path v-if="interact" d="M0,100 L100,0" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1" stroke-linecap="round" />
+                <path v-if="interact" d="M0,100 L100,0" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1"
+                    stroke-linecap="round" />
             </g>
             <g v-for="i in 2">
                 <line :x1="i == 1 ? 0 : 100" :y1="i == 1 ? 100 : 0"
                     :x2="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
-                    :y2="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :stroke="interact ? '#c680d1' : '#444'" stroke-width="1" />
-                <circle :id="`circle${i}`" :ref="`circleElement_${i}`" 
+                    :y2="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :stroke="interact ? '#c680d1' : '#444'"
+                    stroke-width="1" />
+                <circle :id="`circle${i}`" :ref="`circleElement_${i}`"
                     :cx="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
-                    :cy="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="interact ? '#9c27af' : '#444'" r="4" />
+                    :cy="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="interact ? '#9c27af' : '#444'"
+                    r="4" />
             </g>
 
         </svg>
@@ -123,5 +124,4 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     justify-content: center;
-} 
-</style>
+}</style>
