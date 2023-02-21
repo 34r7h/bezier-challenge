@@ -15,14 +15,7 @@ const presetCoords = ref([
     [.4, 0, 1, 1],
     [0, 0, .6, 1],
 ])
-const windowSize = computed(() => {
-    return [
-        document.getElementById('box')?.clientWidth,
-        document.getElementById('box')?.clientHeight
-    ]
 
-})
-console.log(windowSize.value)
 function updateCoords(newCoords: [number, number, number, number]) {
     console.log('Bezier', { newCoords });
     return coords.value = newCoords
@@ -30,7 +23,7 @@ function updateCoords(newCoords: [number, number, number, number]) {
 </script>
 
 <template class="test">
-    <article id="box" flexcol>
+    <article id="cubic-bezier" class="flexcol">
         <section class="visual">
             <Visualizer :key="coords.join(',')" :coords="coords" /><!-- Show visualizer -->
         </section>
