@@ -86,8 +86,6 @@ onMounted(() => {
 .interaction {
     flex: 3;
     display: flex;
-    width: 100%;
-    max-height: 60%;
     align-items: center;
 }
 
@@ -104,7 +102,6 @@ onMounted(() => {
 
 .adjust {
     width: 75%;
-    padding: 5%;
     flex: 4;
 }
 
