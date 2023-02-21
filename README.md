@@ -10,6 +10,7 @@ TODO:
 5. Find animation shadow formula
 6. Style
 7. Clean code
+9. Scrolling issues on mobile
 8. Deploy
 
 
