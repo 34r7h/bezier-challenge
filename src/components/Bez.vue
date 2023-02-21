@@ -41,9 +41,9 @@ onMounted(() => {
 
 </script>
 
-<template class="test">
+<template @scroll.prevent @touchmove.prevent>
     <article id="cubic-bezier" class="flexcol">
-        <section class="visual">
+        <section class="visual flexcol">
             <Visualizer :key="coords.join(',')" :coords="coords" /><!-- Show visualizer -->
         </section>
         <section class="interaction">
@@ -65,6 +65,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
+#cubic-bezier {
+    overflow:hidden;
+    max-height: 100%;
+    max-width: 100%;
+}
 #box {
     display: flex;
     flex-direction: column;
@@ -77,31 +82,39 @@ onMounted(() => {
 }
 
 .visual {
-    flex: 0 0 16vh;
+    flex: 2;
+    max-height:20%;
 }
 
 .interaction {
-    flex: 1;
+    flex: 3;
     display: flex;
     width: 100%;
+    max-height: 60%;
+    align-items: center;
 }
 
 .show-bezier-string {
     display: flex;
     width: 100%;
-    flex: 0 0 16vh;
+    flex: 1;
     font-size: calc((100vh + 100vw) / 40);
     align-items: center;
     justify-content: space-around;
+    max-height:20%;
 }
 
 .adjust {
     width: 75%;
+    padding: 5%;
+    flex: 4;
 }
 
 .presets {
     width: 25%;
+    flex: 1;
 }
+.presets button {margin: 10% 0; border: 0; border-radius: 5%; padding: 5%; height: 25%;}
 
 .flex {
     display: flex;
@@ -113,6 +126,6 @@ onMounted(() => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
+    justify-content: space-around;
 }
 </style>

@@ -103,18 +103,25 @@ export default defineComponent({
 
             <g id="Sine">
                 <path :d="path" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" />
+                <path v-if="interact" d="M0,100 L100,0" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1" stroke-linecap="round" />
             </g>
             <g v-for="i in 2">
                 <line :x1="i == 1 ? 0 : 100" :y1="i == 1 ? 100 : 0"
                     :x2="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
-                    :y2="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" stroke="black" stroke-width="1" />
+                    :y2="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :stroke="interact ? '#c680d1' : '#444'" stroke-width="1" />
                 <circle :id="`circle${i}`" :ref="`circleElement_${i}`" 
                     :cx="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
-                    :cy="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="i == 1 ? 'red' : 'blue'" r="4" />
+                    :cy="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="interact ? '#9c27af' : '#444'" r="4" />
             </g>
 
         </svg>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+} 
+</style>

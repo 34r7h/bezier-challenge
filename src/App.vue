@@ -18,6 +18,7 @@ setTimeout(() => {
 </template>
 
 <style scoped>
+
 #bezier-app {
   height: 100%;
   width: 100%;
