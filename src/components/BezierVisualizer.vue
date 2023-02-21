@@ -16,28 +16,21 @@ export default defineComponent({
     setup(props) {
         const visualizerCircle = ref<SVGCircleElement>()
         const bezierCss = computed(() => String(props.coords.reduce((a, b) => {
-            console.log({ a, b });
             const newBezierCoords = `${a} ${Number(b).toFixed(2)},`
-            console.log({ newBezierCoords });
             return newBezierCoords
             // String(a).concat(' ' + +(b).toFixed(2)))
         }, '')).slice(1, -1))
-        console.log({ bezierCss: bezierCss.value });
+
         onMounted(() => {
-            console.log(visualizerCircle.value)
+            const curve = document.querySelector('path');
+            const length = curve?.getTotalLength();
+
+            for (let i = 0; i < length!; i += (length! / 10)) {
+                const point = curve?.getPointAtLength(i);
+                console.log(`i: ${i}, x: ${point?.x}, y:  ${100 - point?.y!}, difference from previous x: ${i > 10 ? Number(point?.x!) - Number( curve?.getPointAtLength(i-10).x) : point?.x!}, difference from previous y: ${i > 10 ? Number(point?.y!) - Number( curve?.getPointAtLength(i-10).y) : point?.y!}`);
+            }
         })
-        // watch(
-        //     () => bezierCss.value,
-        //     () => {
-        //         const circle = visualizerCircle.value;
-        //         if (circle) {
-        //             let animationTiming = `cubic-bezier(${bezierCss.value}) forwards`
-        //             console.log({ animationTiming });
-        //             circle.style['animation-timing-function'] = `cubic-bezier(${bezierCss.value})`
-        //         }
-        //         console.log({ bezierCSS: bezierCss.value }, circle?.style);
-        //     }
-        // );
+
         return {
             coords: props.coords, bezierCss, visualizerCircle
         }
@@ -46,8 +39,6 @@ export default defineComponent({
 </script>
 
 <template>
-    <div style="position: fixed; font-size: 2vh;">vizok {{ bezierCss }} {{ 'animation: animateWithBezier 3s cubic-bezier(' + bezierCss +
-        ');' }}</div>
     <svg v-if="bezierCss" style="z-index: 1;" ref="box" viewBox="0 0 100 12" version="1.1"
         xmlns="http://www.w3.org/2000/svg">
         <g>
@@ -59,18 +50,21 @@ export default defineComponent({
 
 <style scoped>
 #visualizer_circle {
-    transform: translateX(-10vw);
-    animation: animateWithBezier 3s;
-    animation-timing-function: cubic-bezier(0,0,0,0);
+    transform: translateX(0vw);
+    animation: animateWithBezier 1.5s backwards;
+    animation-timing-function: cubic-bezier(0, 0, 0, 0);
+    opacity: 0;
 }
 
 @keyframes animateWithBezier {
     0% {
+        opacity: 1;
         transform: translateX(0px);
     }
 
     100% {
-        transform: translateX(90%);
+        opacity: 1;
+        transform: translateX(89%);
     }
 }
 </style>
