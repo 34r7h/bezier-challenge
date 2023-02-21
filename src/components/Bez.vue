@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, defineProps } from 'vue'
+import { ref, computed, onMounted, defineProps, defineEmits } from 'vue'
 import BezLine from './BezLine.vue'
 import Visualizer from './BezierVisualizer.vue'
 
 
 const props = defineProps({
-  modelValue: String
+    modelValue: String
 })
-
 var coords = ref([0, 0, 0, 0])
 const cubicBezierString = ref('')
 const presetCoords = ref([
@@ -15,18 +14,18 @@ const presetCoords = ref([
     [.4, 0, 1, 1],
     [0, 0, .6, 1],
 ])
+const emit = defineEmits({
+    'update:modelValue': (value: string) => true
+})
 
 
 
 function updateCoords(newCoords: [number, number, number, number]) {
-    cubicBezierString.value = `cubic-bezier(${newCoords.join(', ')})`
+    cubicBezierString.value = `cubic-bezier(${newCoords.map(c=>c.toFixed(2)).join(', ')})`
+    emit("update:modelValue", cubicBezierString.value)
     return coords.value = newCoords
 }
 console.log(props.modelValue);
-
-// function updateValue(newValue: string) {
-//   value.value = newValue
-// }
 
 const parsedBezierString = computed(() => {
     if (!props.modelValue) return [0, 0, 0, 0]
@@ -60,12 +59,9 @@ onMounted(() => {
                 <BezLine interact @newCoords="updateCoords" :coords="coords" /><!-- primary interactive zone -->
             </div>
         </section>
-        <section class="input">
+        <section class="show-bezier-string">
             <!-- display the calculated cubic-bezier values -->
-            <span style="font-size: 2vh; position: fixed;">cubic-bezier(<span v-for="coord in coords">{{ coord.toFixed(2)
-            }},
-                </span>)</span>
-            <!-- todo remove trailing comma -->
+            {{ modelValue }}
         </section>
     </article>
 </template>
@@ -92,7 +88,7 @@ onMounted(() => {
     width: 100%;
 }
 
-.input {
+.show-bezier-string {
     display: flex;
     width: 100%;
     flex: 0 0 16vh;
