@@ -80,9 +80,9 @@ export default defineComponent({
 
             // console.log('drag', e, circleElement_1?.value?.[0], box.value);
 
-            box.value?.addEventListener('mousemove', drag)
-            box.value?.addEventListener('mouseup', (e) => {
-                ['mousemove', 'mouseup'].forEach(watcher =>
+            box.value?.addEventListener('pointermove', drag)
+            box.value?.addEventListener('pointerup', (e) => {
+                ['pointermove', 'pointerup'].forEach(watcher =>
                     box.value?.removeEventListener(watcher, drag))
                 selectedCircle.value = ''
             })
@@ -98,7 +98,7 @@ export default defineComponent({
 
 <template>
     <div class="container" :id="`svg-${name}`">
-        <svg @mousedown="drag" style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1"
+        <svg @pointerdown.prevent="drag" style="z-index: 1;" ref="box" viewBox="0 0 100 100" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
 
             <g id="Sine">
@@ -108,7 +108,7 @@ export default defineComponent({
                 <line :x1="i == 1 ? 0 : 100" :y1="i == 1 ? 100 : 0"
                     :x2="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
                     :y2="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" stroke="black" stroke-width="1" />
-                <circle :id="`circle${i}`" :ref="`circleElement_${i}`" draggable="true" @drag="drag"
+                <circle :id="`circle${i}`" :ref="`circleElement_${i}`" 
                     :cx="+(i == 1 ? c1[0] as Number : c2[0] as Number) * 100"
                     :cy="100 - +(i == 1 ? c1[1] as Number : c2[1] as Number) * 100" :fill="i == 1 ? 'red' : 'blue'" r="4" />
             </g>

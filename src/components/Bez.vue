@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, defineProps, defineEmits } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import BezLine from './BezLine.vue'
 import Visualizer from './BezierVisualizer.vue'
 
@@ -19,7 +19,6 @@ const emit = defineEmits({
 })
 
 
-
 function updateCoords(newCoords: [number, number, number, number]) {
     cubicBezierString.value = `cubic-bezier(${newCoords.map(c=>c.toFixed(2)).join(', ')})`
     emit("update:modelValue", cubicBezierString.value)
@@ -30,7 +29,6 @@ console.log(props.modelValue);
 const parsedBezierString = computed(() => {
     if (!props.modelValue) return [0, 0, 0, 0]
     const [...values] = props.modelValue.split('(').pop()!.split(')')[0].split(',')!
-    console.log(values)
     return values.map(Number)
 })
 
