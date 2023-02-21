@@ -42,7 +42,7 @@ export default defineComponent({
     <svg v-if="bezierCss" style="z-index: 1;" ref="box" viewBox="0 0 100 12" version="1.1"
         xmlns="http://www.w3.org/2000/svg">
         <g>
-            <circle id="visualizer_circle" ref="visualizerCircle" :cx="6" :cy="6" fill="green" r="5"
+            <circle id="visualizer_circle" ref="visualizerCircle" :cx="6" :cy="6" fill="#c680d1" r="5"
                 :style="'animation-timing-function: cubic-bezier(' + bezierCss + ');'" />
         </g>
     </svg>
