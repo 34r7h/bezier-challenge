@@ -22,7 +22,6 @@ const updateCubicBezierString = (val: string) => { // 2-way binding to update
   height: 50vh;
   width: 50vh;
   border: 1px solid rgba(0,0,0,.2);
-  padding: 16px;
   border-radius: 5vh;
 }
 </style>

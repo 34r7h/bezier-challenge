@@ -46,7 +46,7 @@ onMounted(() => {
         <section class="interaction">
             <div class="presets flexcol">
                 <!-- three vertical buttons, click to assign preset coords -->
-                <button class="" v-for="presetCoord in presetCoords" @click="coords = presetCoord">
+                <button class="" v-for="presetCoord in presetCoords" @click="updateCoords([presetCoord[0], presetCoord[1], presetCoord[2], presetCoord[3]])" >
                     <BezLine @click.prevent="() => null" :coords="presetCoord" />
                 </button>
             </div>
